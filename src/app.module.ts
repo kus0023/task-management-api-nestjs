@@ -8,6 +8,7 @@ import { ConfigModule } from '@nestjs/config';
 import { APP_GUARD } from '@nestjs/core';
 import { JwtAuthGuard } from './auth/guards/jwt.guard';
 import { BoardsModule } from './boards/boards.module';
+import { BoardListsModule } from './board-lists/board-lists.module';
 
 @Module({
   imports: [
@@ -15,7 +16,8 @@ import { BoardsModule } from './boards/boards.module';
     DatabaseModule,
     UsersModule,
     AuthModule,
-    BoardsModule
+    BoardsModule,
+    BoardListsModule
   ],
   controllers: [AppController],
   providers: [
