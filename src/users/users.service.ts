@@ -1,5 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
+import { hashSync } from 'bcrypt';
 import { DatabaseService } from 'src/database/database.service';
 
 @Injectable()
@@ -15,6 +16,7 @@ export class UsersService {
      * @returns {Promise<Prisma.User>} The created user.
      */
     createUser(userDetails: Prisma.UserCreateInput) {
+        userDetails.password = hashSync(userDetails.password, 10);
         this.logger.log(`Creating user with details: ${JSON.stringify(userDetails)}`);
         return this.dbService.user.create({ data: userDetails })
             .then(user => {
@@ -31,6 +33,13 @@ export class UsersService {
     async getUser(userId: string) {
         this.logger.log(`Retrieving user with id ${userId}`);
         const user = await this.dbService.user.findUnique({ where: { id: userId } });
+        this.logger.log(`Retrieved user: ${JSON.stringify(user)}`);
+        return user;
+    }
+
+    async getUserByEmail(email: string) {
+        this.logger.log(`Retrieving user with email ${email}`);
+        const user = await this.dbService.user.findUnique({ where: { email } });
         this.logger.log(`Retrieved user: ${JSON.stringify(user)}`);
         return user;
     }
