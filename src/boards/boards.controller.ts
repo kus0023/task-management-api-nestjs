@@ -17,26 +17,32 @@ export class BoardsController {
   }
 
   @Get()
-  findAll() {
-    const boards = this.boardsService.findAll();
+  async findAll() {
+    const boards = await this.boardsService.findAll();
     if (!boards) throw new NotFoundException("No boards are available");
     return boards;
   }
 
   @Get(':id')
-  findOne(@Param('id') boardId: string, @Request() req) {
-    const boards = this.boardsService.findOne(boardId, req.user.userId);
+  async findOne(@Param('id') boardId: string, @Request() req) {
+    const boards = await this.boardsService.findOne(boardId, req.user.userId);
     if (!boards) throw new NotFoundException("No boards are available");
     return boards;
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateBoardDto: UpdateBoardDto) {
-    return this.boardsService.update(+id, updateBoardDto);
+  async update(
+    @Param('id') boardId: string,
+    @Body() updateBoardDto: UpdateBoardDto,
+    @Request() req) {
+    const requestingUserId = req.user.userId;
+    return this.boardsService.update(boardId, updateBoardDto, requestingUserId);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.boardsService.remove(+id);
+  async remove(@Param('id') id: string, @Request() req) {
+
+    const requestingUserId = req.user.userId;
+    return this.boardsService.remove(id, requestingUserId);
   }
 }

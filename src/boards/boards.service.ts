@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { UpdateBoardDto } from './dto/update-board.dto';
 import { Prisma } from '@prisma/client';
 import { DatabaseService } from 'src/database/database.service';
@@ -11,32 +11,52 @@ export class BoardsService {
   ) { }
 
   async create(createBoardDto: Prisma.BoardCreateInput) {
-
     this.logger.log(`Creating board with details: ${JSON.stringify(createBoardDto)}`);
     const board = await this.dbService.board.create({ data: createBoardDto });
     this.logger.log(`Created board: ${JSON.stringify(board)}`);
     return board;
   }
 
-  findAll() {
-    return this.dbService.board.findMany({ include: { BoardList: true, user: true, sharedWith: true } });
+  async findAll() {
+    this.logger.log('Retrieving all boards');
+    return this.dbService.board.findMany({
+      include: {
+        BoardList: true,
+        user: { omit: { password: true } },
+        sharedWith: true
+      }
+    });
   }
 
-  findOne(boardId: string, requestingUserId: string) {
+  async findOne(boardId: string, requestingUserId: string) {
+    this.logger.log(`Retrieving board with id ${boardId} and user id ${requestingUserId}`);
     return this.dbService.board.findUnique({
       where: {
         id: boardId,
         user: { id: requestingUserId }
       },
-      include: { BoardList: true, user: true, sharedWith: true }
+      include: { BoardList: true, user: { omit: { password: true } }, sharedWith: true },
+
     });
   }
 
-  update(id: number, updateBoardDto: UpdateBoardDto) {
-    return `This action updates a #${id} board`;
+  async update(boardId: string, updateBoardDto: UpdateBoardDto, requestingUserId: string) {
+    this.logger.log(`Updating board with id ${boardId} and user id ${requestingUserId}`);
+    return this.dbService.board
+      .update({
+        where: {
+          id: boardId,
+          user: { id: requestingUserId }
+        },
+        data: updateBoardDto
+      });
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} board`;
+  async remove(boardId: string, requestingUserId: string) {
+    this.logger.log(`Deleting board with id ${boardId} and user id ${requestingUserId}`);
+    const board = await this.findOne(boardId, requestingUserId);
+    if (!board) throw new NotFoundException("Board not found");
+    return this.dbService.board.delete({ where: { id: boardId, user: { id: requestingUserId } } });
   }
 }
+
