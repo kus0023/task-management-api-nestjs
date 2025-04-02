@@ -4,6 +4,7 @@ import { UsersService } from 'src/users/users.service';
 import { RegisterDto } from './dto/register.dto';
 import { LocalAuthGuard } from './guards/local.guard';
 import { JwtAuthGuard } from './guards/jwt.guard';
+import { Public } from './decorators/public.decorator';
 
 @Controller('auth')
 export class AuthController {
@@ -13,11 +14,13 @@ export class AuthController {
   ) { }
 
   @Post('register')
+  @Public()
   register(@Body() registerDto: RegisterDto) {
     return this.usersService.createUser(registerDto);
   }
 
   @Post('login')
+  @Public()
   @UseGuards(LocalAuthGuard)
   login(@Request() req) {
     return this.authService.login(req.user);
