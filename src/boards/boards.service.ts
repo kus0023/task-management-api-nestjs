@@ -19,11 +19,17 @@ export class BoardsService {
   }
 
   findAll() {
-    return `This action returns all boards`;
+    return this.dbService.board.findMany({ include: { BoardList: true, user: true, sharedWith: true } });
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} board`;
+  findOne(boardId: string, requestingUserId: string) {
+    return this.dbService.board.findUnique({
+      where: {
+        id: boardId,
+        user: { id: requestingUserId }
+      },
+      include: { BoardList: true, user: true, sharedWith: true }
+    });
   }
 
   update(id: number, updateBoardDto: UpdateBoardDto) {

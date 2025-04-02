@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Request } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Request, NotFoundException } from '@nestjs/common';
 import { BoardsService } from './boards.service';
 import { CreateBoardDto } from './dto/create-board.dto';
 import { UpdateBoardDto } from './dto/update-board.dto';
@@ -9,7 +9,6 @@ export class BoardsController {
 
   @Post()
   async create(@Body() createBoardDto: CreateBoardDto, @Request() req) {
-    console.log(createBoardDto, req.user);
 
     createBoardDto.user = { connect: { id: req.user.userId } };
 
@@ -19,12 +18,16 @@ export class BoardsController {
 
   @Get()
   findAll() {
-    return this.boardsService.findAll();
+    const boards = this.boardsService.findAll();
+    if (!boards) throw new NotFoundException("No boards are available");
+    return boards;
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.boardsService.findOne(+id);
+  findOne(@Param('id') boardId: string, @Request() req) {
+    const boards = this.boardsService.findOne(boardId, req.user.userId);
+    if (!boards) throw new NotFoundException("No boards are available");
+    return boards;
   }
 
   @Patch(':id')
