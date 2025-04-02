@@ -14,7 +14,7 @@ datasource db {
 }
 
 model User {
-  id        String   @id @map("_id") @db.ObjectId
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
   name      String
   email     String   @unique
   password  String
@@ -28,7 +28,7 @@ model User {
 }
 
 model Board {
-  id         String      @id @map("_id") @db.ObjectId
+  id         String      @id @default(auto()) @map("_id") @db.ObjectId
   name       String      @unique
   sharedWith User[]      @relation("sharedWithRelation")
   createdBy  User        @relation("createdByRelation", fields: [userId], references: [id])
@@ -38,7 +38,7 @@ model Board {
 }
 
 model BoardList {
-  id          String   @id @map("_id") @db.ObjectId
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
   name        String   @unique
   boardId     String   @db.ObjectId
   boardDetail Board    @relation(fields: [boardId], references: [id])
@@ -48,7 +48,7 @@ model BoardList {
 }
 
 model Task {
-  id               String        @id @map("_id") @db.ObjectId
+  id               String        @id @default(auto()) @map("_id") @db.ObjectId
   name             String
   description      String
   deadline         DateTime
