@@ -21,20 +21,22 @@ model User {
   createdAt DateTime @default(now())
   updateAt  DateTime @updatedAt
 
-  Board   Board?  @relation("sharedWithRelation", fields: [boardId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  boardId String? @db.ObjectId
-  Boards  Board[] @relation("createdByRelation")
-  Task    Task[]
+  created  Board[]  @relation("createdByRelation")
+  task     Task[]
+  shared   Board[]  @relation("sharedWithRelation", fields: [boardIds], references: [id])
+  boardIds String[] @db.ObjectId
 }
 
 model Board {
-  id         String      @id @default(auto()) @map("_id") @db.ObjectId
-  name       String      @unique
-  sharedWith User[]      @relation("sharedWithRelation")
-  createdBy  User        @relation("createdByRelation", fields: [userId], references: [id])
-  updateAt   DateTime    @updatedAt
-  userId     String      @db.ObjectId
-  BoardList  BoardList[]
+  id            String      @id @default(auto()) @map("_id") @db.ObjectId
+  name          String      @unique
+  sharedWith    User[]      @relation("sharedWithRelation", fields: [sharedWithIds], references: [id])
+  user          User        @relation("createdByRelation", fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  createdAt     DateTime    @default(now())
+  updateAt      DateTime    @updatedAt
+  userId        String      @db.ObjectId
+  sharedWithIds String[]    @db.ObjectId
+  BoardList     BoardList[]
 }
 
 model BoardList {
