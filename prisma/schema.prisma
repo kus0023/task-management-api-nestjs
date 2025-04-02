@@ -29,7 +29,7 @@ model User {
 
 model Board {
   id            String      @id @default(auto()) @map("_id") @db.ObjectId
-  name          String      @unique
+  name          String
   sharedWith    User[]      @relation("sharedWithRelation", fields: [sharedWithIds], references: [id])
   user          User        @relation("createdByRelation", fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   createdAt     DateTime    @default(now())
@@ -41,7 +41,7 @@ model Board {
 
 model BoardList {
   id          String   @id @default(auto()) @map("_id") @db.ObjectId
-  name        String   @unique
+  name        String
   boardId     String   @db.ObjectId
   boardDetail Board    @relation(fields: [boardId], references: [id])
   createdAt   DateTime @default(now())

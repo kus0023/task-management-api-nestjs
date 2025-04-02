@@ -14,7 +14,34 @@ export class BoardsService {
     this.logger.log(`Creating board with details: ${JSON.stringify(createBoardDto)}`);
     const board = await this.dbService.board.create({ data: createBoardDto });
     this.logger.log(`Created board: ${JSON.stringify(board)}`);
-    return board;
+
+    this.logger.log('Creating board lists of name In-Progress, Completed and To-do');
+    const boardLists = await this.dbService.$transaction([
+      this.dbService.boardList.create({
+        data: {
+          name: "In-Progress",
+          boardId: board.id
+        }
+      }),
+      this.dbService.boardList.create({
+        data: {
+          name: "Completed",
+          boardId: board.id
+        }
+      }),
+      this.dbService.boardList.create({
+        data: {
+          name: "To-do",
+          boardId: board.id
+        }
+      })
+
+    ])
+
+    this.logger.log(`Created board lists: ${JSON.stringify(boardLists)}`);
+
+
+    return board
   }
 
   async findAll() {
