@@ -9,6 +9,7 @@ import { APP_GUARD } from '@nestjs/core';
 import { JwtAuthGuard } from './auth/guards/jwt.guard';
 import { BoardsModule } from './boards/boards.module';
 import { BoardListsModule } from './board-lists/board-lists.module';
+import { TasksModule } from './tasks/tasks.module';
 
 @Module({
   imports: [
@@ -17,7 +18,8 @@ import { BoardListsModule } from './board-lists/board-lists.module';
     UsersModule,
     AuthModule,
     BoardsModule,
-    BoardListsModule
+    BoardListsModule,
+    TasksModule
   ],
   controllers: [AppController],
   providers: [

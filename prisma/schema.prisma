@@ -53,14 +53,14 @@ model Task {
   id               String        @id @default(auto()) @map("_id") @db.ObjectId
   name             String
   description      String
-  deadline         DateTime
+  deadline         DateTime      @db.Date()
   priorityLevel    PriorityLevel @default(value: Low)
-  assignedTo       String        @db.ObjectId
+  assignedTo       String?       @db.ObjectId
   boardListId      String        @db.ObjectId
   createdAt        DateTime      @default(now())
   updateAt         DateTime      @updatedAt
-  assignedToDetail User          @relation(fields: [assignedTo], references: [id])
-  boardListDetail  BoardList     @relation(fields: [boardListId], references: [id])
+  assignedToDetail User?         @relation(fields: [assignedTo], references: [id])
+  boardListDetail  BoardList     @relation(fields: [boardListId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 }
 
 enum PriorityLevel {
