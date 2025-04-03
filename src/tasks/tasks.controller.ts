@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Request } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Request, ValidationPipe } from '@nestjs/common';
 import { TasksService } from './tasks.service';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { UpdateTaskDto } from './dto/update-task.dto';
@@ -23,7 +23,10 @@ export class TasksController {
   @Patch(':id')
   update(
     @Param('id') id: string,
-    @Body() updateTaskDto: UpdateTaskDto,
+    @Body(
+      new ValidationPipe({ whitelist: true, forbidUnknownValues: true })
+    )
+    updateTaskDto: UpdateTaskDto,
     @Request() req: any
   ) {
     const currentUserId = req.user.userId;

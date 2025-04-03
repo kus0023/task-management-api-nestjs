@@ -82,7 +82,8 @@ export class TasksService {
       throw new UnauthorizedException("You are not authorized to update this task");
 
     // update done by current user
-    // The user who don't own the task can update assignee
+    // The user also can't change assignee from here
+    // It should be from route ==> POST /collaborate/board/share
     if (isOwnerOfBoard) {
       return this.dbService.task.update({
         where: {
