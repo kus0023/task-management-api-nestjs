@@ -1,26 +1,37 @@
-import { Injectable } from '@nestjs/common';
-import { CreateCollaborationDto } from './dto/create-collaboration.dto';
-import { UpdateCollaborationDto } from './dto/update-collaboration.dto';
+import { BadRequestException, Injectable, UnauthorizedException } from '@nestjs/common';
+import { DatabaseService } from 'src/database/database.service';
+import { ShareBoardWithDto } from './dto/share-board-with.dto';
 
 @Injectable()
 export class CollaborationService {
-  create(createCollaborationDto: CreateCollaborationDto) {
-    return 'This action adds a new collaboration';
+
+  constructor(private readonly dbService: DatabaseService) { }
+
+  async shareBoardWith(shareBoardWithDto: ShareBoardWithDto, currentUserId: string) {
+
+    // check if current user is the owner of the board
+    const board = await this.dbService.board.findUnique({ where: { id: shareBoardWithDto.boardId, userId: currentUserId } });
+    if (!board) throw new UnauthorizedException('Board not owned by user');
+
+    // check if all users exist
+    const users = await this.dbService.user
+      .findMany({ where: { id: { in: shareBoardWithDto.userIds } } });
+    if (users.length !== shareBoardWithDto.userIds.length) throw new BadRequestException('User/users does not exist');
+
+    // get all unique Id of users
+    const uniqueUserIds = [...new Set([...shareBoardWithDto.userIds, ...board.sharedWithIds])];
+
+    return this.dbService.board.update({
+      where: { id: shareBoardWithDto.boardId },
+      data: {
+        sharedWithIds: {
+          set: uniqueUserIds
+        }
+      },
+      include: {
+        BoardList: true
+      }
+    });
   }
 
-  findAll() {
-    return `This action returns all collaboration`;
-  }
-
-  findOne(id: number) {
-    return `This action returns a #${id} collaboration`;
-  }
-
-  update(id: number, updateCollaborationDto: UpdateCollaborationDto) {
-    return `This action updates a #${id} collaboration`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} collaboration`;
-  }
 }

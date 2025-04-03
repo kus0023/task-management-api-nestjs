@@ -1,34 +1,21 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Request } from '@nestjs/common';
 import { CollaborationService } from './collaboration.service';
-import { CreateCollaborationDto } from './dto/create-collaboration.dto';
-import { UpdateCollaborationDto } from './dto/update-collaboration.dto';
+import { ShareBoardWithDto } from './dto/share-board-with.dto';
 
 @Controller('collaboration')
 export class CollaborationController {
-  constructor(private readonly collaborationService: CollaborationService) {}
+  constructor(private readonly collaborationService: CollaborationService) { }
+
+  /**
+   * Collaboration:
+   * Users can share boards with other users.
+   * Users can assign tasks to specific users within the board.
+   */
 
   @Post()
-  create(@Body() createCollaborationDto: CreateCollaborationDto) {
-    return this.collaborationService.create(createCollaborationDto);
+  shareBoardWith(@Body() shareBoardWithDto: ShareBoardWithDto, @Request() req) {
+    const currentUserId = req.user.userId;
+    return this.collaborationService.shareBoardWith(shareBoardWithDto, currentUserId);
   }
 
-  @Get()
-  findAll() {
-    return this.collaborationService.findAll();
-  }
-
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.collaborationService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateCollaborationDto: UpdateCollaborationDto) {
-    return this.collaborationService.update(+id, updateCollaborationDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.collaborationService.remove(+id);
-  }
 }
