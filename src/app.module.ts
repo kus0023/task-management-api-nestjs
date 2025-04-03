@@ -10,6 +10,7 @@ import { JwtAuthGuard } from './auth/guards/jwt.guard';
 import { BoardsModule } from './boards/boards.module';
 import { BoardListsModule } from './board-lists/board-lists.module';
 import { TasksModule } from './tasks/tasks.module';
+import { CollaborationModule } from './collaboration/collaboration.module';
 
 @Module({
   imports: [
@@ -19,7 +20,8 @@ import { TasksModule } from './tasks/tasks.module';
     AuthModule,
     BoardsModule,
     BoardListsModule,
-    TasksModule
+    TasksModule,
+    CollaborationModule
   ],
   controllers: [AppController],
   providers: [
