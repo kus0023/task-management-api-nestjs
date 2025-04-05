@@ -40,10 +40,23 @@ $ npm run start:prod
 
 ## Run tests
 
+### Create a .env.test file 
+
+```
+DATABASE_URL="<Mongo-DB-test-URL>"
+JWT_ACCESS_TOKEN_SECRET="<Your-Access-Token>"
+JWT_ACCESS_TOKEN_EXPIRATION_TIME="1d"
+```
+
+### Run command to test
+
+- Note: Make sure you have install dotenv-cli globally as mentioned above.
+
 ```bash
 # e2e tests
 $ npm run test:e2e
 ```
+- Create a .env.test file 
 
 ## Support
 
