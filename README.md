@@ -56,7 +56,6 @@ JWT_ACCESS_TOKEN_EXPIRATION_TIME="1d"
 # e2e tests
 $ npm run test:e2e
 ```
-- Create a .env.test file 
 
 ## Support
 
