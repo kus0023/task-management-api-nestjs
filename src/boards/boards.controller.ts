@@ -10,15 +10,16 @@ export class BoardsController {
   @Post()
   async create(@Body() createBoardDto: CreateBoardDto, @Request() req) {
 
-    createBoardDto.user = { connect: { id: req.user.userId } };
+    createBoardDto.userId = req.user.userId;
 
     const board = await this.boardsService.create(createBoardDto);
     return board
   }
 
   @Get()
-  async findAll() {
-    const boards = await this.boardsService.findAll();
+  async findAll(@Request() req) {
+    const currentUserId = req.user.userId;
+    const boards = await this.boardsService.findAll(currentUserId);
     if (!boards) throw new NotFoundException("No boards are available");
     return boards;
   }
@@ -35,14 +36,14 @@ export class BoardsController {
     @Param('id') boardId: string,
     @Body() updateBoardDto: UpdateBoardDto,
     @Request() req) {
-    const requestingUserId = req.user.userId;
-    return this.boardsService.update(boardId, updateBoardDto, requestingUserId);
+    const currentUserId = req.user.userId;
+    return this.boardsService.update(boardId, updateBoardDto, currentUserId);
   }
 
   @Delete(':id')
   async remove(@Param('id') id: string, @Request() req) {
 
-    const requestingUserId = req.user.userId;
-    return this.boardsService.remove(id, requestingUserId);
+    const currentUserId = req.user.userId;
+    return this.boardsService.remove(id, currentUserId);
   }
 }

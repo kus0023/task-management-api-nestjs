@@ -10,7 +10,7 @@ export class BoardsService {
     private readonly dbService: DatabaseService
   ) { }
 
-  async create(createBoardDto: Prisma.BoardCreateInput) {
+  async create(createBoardDto: Prisma.BoardCreateManyInput) {
     this.logger.log(`Creating board with details: ${JSON.stringify(createBoardDto)}`);
     const board = await this.dbService.board.create({ data: createBoardDto });
     this.logger.log(`Created board: ${JSON.stringify(board)}`);
@@ -44,9 +44,12 @@ export class BoardsService {
     return board
   }
 
-  async findAll() {
+  async findAll(currentUserId: string) {
     this.logger.log('Retrieving all boards');
     return this.dbService.board.findMany({
+      where: {
+        userId: currentUserId
+      },
       include: {
         BoardList: true,
         user: { omit: { password: true } },
@@ -67,23 +70,23 @@ export class BoardsService {
     });
   }
 
-  async update(boardId: string, updateBoardDto: UpdateBoardDto, requestingUserId: string) {
-    this.logger.log(`Updating board with id ${boardId} and user id ${requestingUserId}`);
+  async update(boardId: string, updateBoardDto: UpdateBoardDto, currentUserId: string) {
+    this.logger.log(`Updating board with id ${boardId} and user id ${currentUserId}`);
     return this.dbService.board
       .update({
         where: {
           id: boardId,
-          user: { id: requestingUserId }
+          user: { id: currentUserId }
         },
         data: updateBoardDto
       });
   }
 
-  async remove(boardId: string, requestingUserId: string) {
-    this.logger.log(`Deleting board with id ${boardId} and user id ${requestingUserId}`);
-    const board = await this.findOne(boardId, requestingUserId);
+  async remove(boardId: string, currentUserId: string) {
+    this.logger.log(`Deleting board with id ${boardId} and user id ${currentUserId}`);
+    const board = await this.findOne(boardId, currentUserId);
     if (!board) throw new NotFoundException("Board not found");
-    return this.dbService.board.delete({ where: { id: boardId, user: { id: requestingUserId } } });
+    return this.dbService.board.delete({ where: { id: boardId, user: { id: currentUserId } } });
   }
 }
 

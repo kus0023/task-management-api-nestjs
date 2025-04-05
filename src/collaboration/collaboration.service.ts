@@ -79,4 +79,35 @@ export class CollaborationService {
     });
   }
 
+  getAllSharedTasks(currentUserId: string) {
+    return this.dbService.task.findMany({
+      where: {
+        assignedTo: currentUserId
+      },
+      include: {
+        boardListDetail: {
+          include: {
+            boardDetail: true
+          }
+        }
+      }
+    })
+  }
+  getAllSharedBoards(currentUserId: string) {
+    return this.dbService.board.findMany({
+      where: {
+        sharedWithIds: {
+          has: currentUserId
+        }
+      },
+      include: {
+        BoardList: {
+          include: {
+            Task: true
+          }
+        },
+      }
+    })
+  }
+
 }

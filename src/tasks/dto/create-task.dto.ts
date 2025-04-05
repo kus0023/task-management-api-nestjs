@@ -22,8 +22,6 @@ export class CreateTaskDto {
     @IsOptional()
     priorityLevel: PriorityLevel;
 
-    assignedTo: string | null;
-
     @IsString()
     @IsNotEmpty()
     boardListId: string;

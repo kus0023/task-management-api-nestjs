@@ -1,5 +1,6 @@
+import { Optional } from "@nestjs/common";
 import { Prisma } from "@prisma/client";
-import { IsNotEmpty, IsString } from "class-validator";
+import { IsMongoId, IsNotEmpty, IsString } from "class-validator";
 
 export class CreateBoardDto {
     id?: string;
@@ -7,7 +8,8 @@ export class CreateBoardDto {
     @IsNotEmpty()
     name: string;
     updateAt?: Date | string;
-    user: Prisma.UserCreateNestedOneWithoutCreatedInput;
+
+    @Optional()
+    userId: string;
     createdAt?: Date | string;
-    BoardList?: Prisma.BoardListCreateNestedManyWithoutBoardDetailInput;
 }
