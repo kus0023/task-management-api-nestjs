@@ -13,6 +13,8 @@
 
 ```bash
 $ npm install
+
+$ npm install -g dotenv-cli 
 ```
 
 ## .env Example
